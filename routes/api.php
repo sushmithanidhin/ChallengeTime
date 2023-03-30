@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::get('/companies', 'App\Http\Controllers\CompanyController@getCompanies');
+Route::post('/company', 'App\Http\Controllers\CompanyController@store');
+Route::post('/user', 'App\Http\Controllers\UserController@store');

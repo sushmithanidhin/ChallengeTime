@@ -16,6 +16,7 @@ class CreateCompanyUserTable extends Migration
         Schema::create('company_user', function (Blueprint $table) {
             $table->string('user_id');
             $table->string('company_id');
+            $table->boolean('active')->default(true);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('company_id')->references('id')->on('companies');
 

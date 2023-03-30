@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Models\User;
+use App\Models\Company;
 
-class UserRepository implements BaseInterface
+class CompanyRepository implements BaseInterface
 {
     public function fetchAll()
     {
-        return User::all();
+        return Company::all();
     }
 
     public function fetchById($identifier)
     {
-        return User::find($identifier);
+        return Company::find($identifier);
     }
 
     public function delete($identifier)
@@ -23,7 +23,7 @@ class UserRepository implements BaseInterface
 
     public function firstOrCreate(array $data)
     {
-        return User::firstOrCreate($data);
+        return Company::firstOrCreate($data);
     }
 
     public function update($identifier, array $data)

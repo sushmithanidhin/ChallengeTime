@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Company extends Model
 {
@@ -22,6 +23,7 @@ class Company extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'started_at',
     ];
@@ -36,35 +38,47 @@ class Company extends Model
     ];
 
     protected $appends = ['age'];
+
+    protected $hidden = ['created_at', 'updated_at', 'pivot'];
     /**
-     * @var mixed
+     *
+     * @return string
      */
-    private $id;
-
-    public function getAgeAttribute()
+    public function getAgeAttribute(): string
     {
-        // $features = $this->features()->get();
-        // if (count($features) > 0 ) {
-        //     foreach ($features as $feature) {
-        //         if (isset($feature->pivot) && $feature->name == "Artysta") {
-        //             return $feature->pivot->custom_value;
-        //         }
-        //     }
-        // }
-        $dateDiff = date_diff(new Datetime(),$this->started_at);
-        return $dateDiff->y . 'year/s';
-    }
-
-    public function getId()
-    {
-        return $this->id;
+        return $this->started_at->diffInYears(now()) . ' year/s';
     }
     /**
      * The users that belong to the role.
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
 
+    /**
+     * Filter data with optional min and max age parameter
+     * @param $query
+     * @param $min
+     * @param $max
+     * @return mixed
+     */
+    public function scopeFilterByUsersAge($query, $min = null, $max = null)
+    {
+            return $query->whereHas('users', function ($query) use ($min, $max) {
+                if ($min) {
+                    $query->where('age', '>=', $min);
+                }
+                if ($max) {
+                    $query->where('age', '<=', $max);
+                }
+            })->with('users', function ($query) use ($min, $max) {
+                if ($min) {
+                    $query->where('age', '>=', $min);
+                }
+                if ($max) {
+                    $query->where('age', '<=', $max);
+                }
+            });
+    }
 }
